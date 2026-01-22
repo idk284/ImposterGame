@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Imposter</title>
+    <style>
+        /* --- MODERN CSS STYLING --- */
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-main: #ffffff;
+            --accent: #00d2d3;
+            --imposter-color: #ff4757;
+            --civilian-color: #2ed573;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main);
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .app-container {
+            width: 90%;
+            max-width: 450px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            background: -webkit-linear-gradient(45deg, #00d2d3, #54a0ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 { font-weight: 600; font-size: 1.5rem; margin-top: 0; }
+        p { font-size: 1rem; color: rgba(255,255,255,0.8); line-height: 1.5; }
+
+        /* Controls */
+        .control-group {
+            margin: 25px 0;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        label { font-weight: 600; font-size: 0.9rem; }
+        
+        input[type="number"] {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px;
+            border-radius: 8px;
+            width: 50px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        button {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        button:active { transform: scale(0.96); }
+
+        .btn-primary { background: var(--accent); color: #0f2027; }
+        .btn-reveal { background: #ffffff; color: #000; }
+        .btn-hidden { background: #57606f; color: #fff; }
+        .btn-restart { background: transparent; border: 2px solid rgba(255,255,255,0.3); color: white; }
+
+        /* Role Cards */
+        .role-card {
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            border: 2px solid transparent;
+        }
+
+        .imposter-bg { border-color: var(--imposter-color); box-shadow: 0 0 20px rgba(255, 71, 87, 0.3); }
+        .civilian-bg { border-color: var(--civilian-color); box-shadow: 0 0 20px rgba(46, 213, 115, 0.3); }
+
+        .big-word {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin: 15px 0;
+            text-transform: uppercase;
+            word-wrap: break-word;
+        }
+
+        /* Utilities */
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tag {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 10px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <header>
+            <h1>🕵️ Imposter</h1>
+        </header>
+
+        <div id="setup-screen" class="fade-in">
+            <p>Pass the phone. Blend in. Don't get caught.</p>
+            
+            <div class="control-group">
+                <label>Players</label>
+                <input type="number" id="playerCount" value="4" min="3" max="20" inputmode="numeric">
+            </div>
+
+            <div class="control-group">
+                <label>Imposters</label>
+                <input type="number" id="imposterCount" value="1" min="1" max="5" inputmode="numeric">
+            </div>
+
+            <button class="btn-primary" onclick="startGame()">Start Game</button>
+            <p style="font-size: 0.75rem; margin-top: 20px; opacity: 0.5;">Includes 400+ words</p>
+        </div>
+
+        <div id="pass-screen" class="hidden fade-in">
+            <div style="font-size: 4rem; margin: 20px 0;">📱</div>
+            <h2>Pass to Player <span id="player-number-display" style="color:var(--accent)">1</span></h2>
+            <p>Ensure no one else is looking at the screen.</p>
+            <button class="btn-reveal" onclick="revealRole()">Tap to Reveal Role</button>
+        </div>
+
+        <div id="reveal-screen" class="hidden fade-in">
+            <div id="role-info"></div>
+            <button class="btn-primary" onclick="hideRole()">Got it! Hide Role</button>
+        </div>
+
+        <div id="play-screen" class="hidden fade-in">
+            <h2>🔎 Investigation Phase</h2>
+            <div class="role-card" style="border-color: rgba(255,255,255,0.2);">
+                <span class="tag">Category</span>
+                <h3 id="category-display" style="font-size: 1.8rem; margin: 15px 0;"></h3>
+            </div>
+            
+            <p>Discuss. Ask questions. Find the liar.</p>
+            
+            <button class="btn-restart" onclick="resetGame()">End Game & Restart</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- EXPANDED WORD DATABASE (400+ Words) ---
+        const database = {
+            "Animals": ["Lion", "Penguin", "Giraffe", "Elephant", "Kangaroo", "Panda", "Shark", "Eagle", "Sloth", "Platypus", "Octopus", "Chameleon", "Gorilla", "Wolf", "Peacock", "Hippo", "Koala", "Ostrich", "Dolphin", "Bat", "Tiger", "Bear", "Zebra", "Cheetah", "Rhino", "Crocodile", "Flamingo", "Parrot", "Hedgehog", "Otter", "Meerkat", "Raccoon"],
+            "Food": ["Pizza", "Sushi", "Hamburger", "Tacos", "Spaghetti", "Pancakes", "Ice Cream", "Curry", "Steak", "Donuts", "Salad", "Croissant", "Hot Dog", "Lasagna", "Waffles", "Popcorn", "Chocolate", "Cheese", "Lobster", "Ramen", "Burrito", "Fried Chicken", "Omelette", "Baguette", "Cheesecake", "Dim Sum", "Paella", "Falafel", "Kebab", "Brownie", "Nachos", "Pretzel"],
+            "Places": ["Hospital", "School", "Library", "Airport", "Beach", "Gym", "Cinema", "Zoo", "Restaurant", "Museum", "Supermarket", "Bank", "Police Station", "Post Office", "Farm", "Hotel", "Stadium", "Casino", "Church", "Space Station", "Prison", "University", "Factory", "Castle", "Skyscraper", "Lighthouse", "Subway", "Graveyard", "Aquarium", "Bowling Alley", "Barbershop"],
+            "Jobs": ["Doctor", "Teacher", "Firefighter", "Pilot", "Artist", "Programmer", "Chef", "Astronaut", "Detective", "Farmer", "Clown", "Scientist", "Judge", "Mechanic", "Plumber", "Writer", "Soldier", "Magician", "Athlete", "Architect", "Dentist", "Nurse", "Lawyer", "Actor", "Singer", "Veterinarian", "Politician", "Photographer", "Lifeguard", "Electrician", "Spy", "Butcher"],
+            "Household": ["Toaster", "Microwave", "Sofa", "Toothbrush", "Blender", "Vacuum", "Lamp", "Mirror", "Clock", "Pillow", "Towel", "Fridge", "Laptop", "Shovel", "Broom", "Remote", "Candle", "Soap", "Umbrella", "Key", "Toilet", "Shower", "Bed", "Desk", "Chair", "Oven", "Washing Machine", "Fan", "Curtains", "Vase", "Rug", "Ladder"],
+            "Nature": ["Mountain", "River", "Forest", "Volcano", "Desert", "Ocean", "Waterfall", "Cave", "Island", "Jungle", "Canyon", "Glacier", "Swamp", "Valley", "Lake", "Tornado", "Rainbow", "Thunderstorm", "Snow", "Moon", "Sun", "Star", "Cloud", "Flower", "Tree", "Cactus", "Coral Reef", "Beach", "Cliff", "Geyser"],
+            "Vehicles": ["Airplane", "Bicycle", "Submarine", "Helicopter", "Tractor", "Scooter", "Train", "Bus", "Motorcycle", "Boat", "Tank", "Ambulance", "Fire Truck", "Skateboard", "Rocket", "Limo", "Taxi", "Canoe", "Jet Ski", "Hot Air Balloon", "UFO", "Truck", "Van", "Segway", "Yacht", "Ferry", "Glider", "Unicycle", "Golf Cart", "Sled"],
+            "Clothing": ["Jeans", "T-Shirt", "Scarf", "Gloves", "Hat", "Socks", "Jacket", "Suit", "Dress", "Boots", "Sneakers", "Tie", "Belt", "Swimsuit", "Pajamas", "Raincoat", "Vest", "Sunglasses", "Watch", "Flip Flops", "Hoodie", "Skirt", "Shorts", "Coat", "Sweater", "Beanie", "Sandals", "Heels", "Mask", "Cape"],
+            "Sports": ["Soccer", "Basketball", "Tennis", "Golf", "Baseball", "Volleyball", "Boxing", "Rugby", "Cricket", "Hockey", "Swimming", "Skiing", "Surfing", "Bowling", "Karate", "Cycling", "Archery", "Badminton", "Wrestling", "Gymnastics", "Skateboarding", "Snowboarding", "Table Tennis", "Fencing", "Dodgeball", "Rowing", "Darts", "Billiards"],
+            "Movies/TV": ["Star Wars", "Harry Potter", "Titanic", "The Avengers", "Jurassic Park", "The Lion King", "Frozen", "Spider-Man", "Batman", "Shrek", "Toy Story", "The Matrix", "Avatar", "Finding Nemo", "Pirates of the Caribbean", "Lord of the Rings", "Friends", "Game of Thrones", "Stranger Things", "The Simpsons", "SpongeBob", "Breaking Bad", "Squid Game", "The Office"],
+            "Characters": ["Mario", "Pikachu", "Mickey Mouse", "Superman", "Sherlock Holmes", "Darth Vader", "James Bond", "Wonder Woman", "Hulk", "Iron Man", "Santa Claus", "Dracula", "Frankenstein", "Tarzan", "Godzilla", "Sonic", "Link", "Zelda", "Goku", "Naruto", "Elsa", "Buzz Lightyear", "Yoda", "Voldemort", "Joker"],
+            "Famous People": ["Albert Einstein", "Michael Jackson", "Leonardo da Vinci", "Elvis Presley", "Marilyn Monroe", "Abraham Lincoln", "Queen Elizabeth", "Steve Jobs", "Elon Musk", "Beyonce", "Cristiano Ronaldo", "Messi", "Shakespeare", "Beethoven", "Picasso", "Gandhi", "Cleopatra", "Napoleon", "Michael Jordan", "Taylor Swift", "The Rock"],
+            "Countries": ["USA", "China", "Japan", "France", "Italy", "Brazil", "India", "Germany", "United Kingdom", "Russia", "Australia", "Canada", "Mexico", "Egypt", "Spain", "South Korea", "Argentina", "Turkey", "Thailand", "Greece", "Sweden", "Norway", "South Africa", "Ireland", "New Zealand", "Vietnam"],
+            "Technology": ["iPhone", "Robot", "Drone", "Internet", "Camera", "Headphones", "VR Headset", "Satellite", "Telescope", "Microscope", "Battery", "Laser", "Bluetooth", "Wifi", "Keyboard", "Mouse", "Printer", "USB Drive", "Smartwatch", "Video Game", "App", "Website", "Algorithm", "AI"],
+            "Brands": ["Nike", "McDonalds", "Apple", "Coca-Cola", "Google", "Disney", "Amazon", "Adidas", "Tesla", "Starbucks", "Netflix", "YouTube", "LEGO", "IKEA", "Toyota", "Samsung", "PlayStation", "Xbox", "Ferrari", "Rolex", "Gucci", "Pepsi", "KFC", "Twitter/X"]
+        };
+
+        // --- GAME VARIABLES ---
+        let players = [];
+        let currentPlayerIndex = 0;
+        let secretWord = "";
+        let secretCategory = "";
+
+        // --- FUNCTIONS ---
+
+        function startGame() {
+            const playerCount = parseInt(document.getElementById('playerCount').value);
+            const imposterCount = parseInt(document.getElementById('imposterCount').value);
+
+            if (isNaN(playerCount) || playerCount < 3) return alert("Minimum 3 players!");
+            if (imposterCount >= playerCount) return alert("Too many imposters!");
+
+            // 1. Select Random Word
+            const categories = Object.keys(database);
+            secretCategory = categories[Math.floor(Math.random() * categories.length)];
+            const words = database[secretCategory];
+            secretWord = words[Math.floor(Math.random() * words.length)];
+
+            // 2. Assign Roles
+            players = Array(playerCount).fill("Civilian");
+            let assigned = 0;
+            while (assigned < imposterCount) {
+                let idx = Math.floor(Math.random() * playerCount);
+                if (players[idx] === "Civilian") {
+                    players[idx] = "Imposter";
+                    assigned++;
+                }
+            }
+
+            // 3. UI Transition
+            currentPlayerIndex = 0;
+            switchScreen('pass-screen');
+            updatePassScreen();
+        }
+
+        function updatePassScreen() {
+            document.getElementById('player-number-display').innerText = currentPlayerIndex + 1;
+        }
+
+        function revealRole() {
+            const role = players[currentPlayerIndex];
+            const infoDiv = document.getElementById('role-info');
+            
+            switchScreen('reveal-screen');
+
+            if (role === "Imposter") {
+                infoDiv.innerHTML = `
+                    <div class="role-card imposter-bg">
+                        <h2 style='color: var(--imposter-color); margin-bottom:0;'>🚫 IMPOSTER</h2>
+                        <p>You don't know the word.</p>
+                        <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
+                            <span class="tag">Category</span>
+                            <p style="font-size: 1.2rem; font-weight:bold; margin-top:5px;">${secretCategory}</p>
+                        </div>
+                    </div>`;
+            } else {
+                infoDiv.innerHTML = `
+                    <div class="role-card civilian-bg">
+                        <h2 style='color: var(--civilian-color); margin-bottom:0;'>✅ CIVILIAN</h2>
+                        <p>The secret word is:</p>
+                        <div class="big-word">${secretWord}</div>
+                        <span class="tag">${secretCategory}</span>
+                    </div>`;
+            }
+        }
+
+        function hideRole() {
+            currentPlayerIndex++;
+            if (currentPlayerIndex < players.length) {
+                switchScreen('pass-screen');
+                updatePassScreen();
+            } else {
+                startMainGame();
+            }
+        }
+
+        function startMainGame() {
+            switchScreen('play-screen');
+            document.getElementById('category-display').innerText = secretCategory;
+        }
+
+        function resetGame() {
+            if(confirm("End the game and return to menu?")) {
+                switchScreen('setup-screen');
+            }
+        }
+
+        function switchScreen(screenId) {
+            const screens = ['setup-screen', 'pass-screen', 'reveal-screen', 'play-screen'];
+            screens.forEach(s => document.getElementById(s).classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
